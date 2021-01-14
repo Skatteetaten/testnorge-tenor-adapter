@@ -1,0 +1,9 @@
+.idea
+target
+*.iml
+/logs/
+**/application-test.yml
+**/application-integration.yaml
+*.sh
+*.jks
+*.zip

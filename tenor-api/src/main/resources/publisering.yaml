@@ -1,0 +1,491 @@
+openapi: 3.0.1
+info:
+    title: Publisering API
+    version: v0
+security:
+    - maskinporten: []
+paths:
+    '/datasett/{datasett}/visning':
+        put:
+            tags:
+                - datasett-api
+            description: Oppdater nøkkelinformasjon felter for datasettet
+            operationId: visning
+            parameters:
+                - name: datasett
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Soekedokument'
+                required: true
+            responses:
+                default:
+                    description: default response
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: '#/components/schemas/Konfigurasjon'
+    '/datasett/{datasett}/relasjoner':
+        put:
+            tags:
+                - datasett-api
+            description: Oppdater relasjonene til datasettet
+            operationId: relasjoner
+            parameters:
+                - name: datasett
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Relasjoner'
+                required: true
+            responses:
+                default:
+                    description: default response
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: '#/components/schemas/Konfigurasjon'
+    '/datasett/{datasett}/metadata':
+        put:
+            tags:
+                - datasett-api
+            description: Oppdater datasett metadata
+            operationId: metadata
+            parameters:
+                - name: datasett
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Datasett'
+                required: true
+            responses:
+                default:
+                    description: default response
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: '#/components/schemas/Konfigurasjon'
+    '/datasett/{datasett}/latest':
+        put:
+            tags:
+                - datasett-versjon-api
+            description: Gjør innsendt versjon tilgjengelig/søkbar i tenor
+            operationId: erstatt
+            parameters:
+                - name: datasett
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: integer
+                            format: int64
+                required: true
+            responses:
+                default:
+                    description: default response
+                    content:
+                        '*/*':
+                            schema:
+                                type: integer
+                                format: int64
+    '/datasett/{datasett}/kriterier':
+        put:
+            tags:
+                - datasett-api
+            description: Oppdater predefinerte søkekriterier i enkelt søk for datasettet
+            operationId: kriterier
+            parameters:
+                - name: datasett
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/SoekeKriterier'
+                required: true
+            responses:
+                default:
+                    description: default response
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: '#/components/schemas/Konfigurasjon'
+    /datasett/:
+        post:
+            tags:
+                - datasett-api
+            description: Last opp fullstendig konfigurasjon første gang datasettet tas i bruk.
+            operationId: opprett
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Konfigurasjon'
+                required: true
+            responses:
+                default:
+                    description: default response
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: '#/components/schemas/Konfigurasjon'
+    '/datasett/{datasett}':
+        post:
+            tags:
+                - datasett-versjon-api
+            description: 'Opprett en ny versjon av testdata, ved f.eks. Nytt format på testdata, eller et nytt sett med testdata.'
+            operationId: nyVersjon
+            parameters:
+                - name: datasett
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                default:
+                    description: default response
+                    content:
+                        '*/*':
+                            schema:
+                                type: integer
+                                format: int64
+    '/datasett/{datasett}/{versjon}/testdata':
+        patch:
+            tags:
+                - datasett-versjon-api
+            description: API for bulk oppdatering av testdata for en versjon under opprettelse
+            operationId: oppdater
+            parameters:
+                - name: datasett
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                - name: versjon
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/BatchTestdataJobbRequest'
+                required: true
+            responses:
+                '207':
+                    description: Multi-Status
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: '#/components/schemas/BatchTestdataJobbResponse'
+    '/datasett/{datasett}/latest/testdata':
+        patch:
+            tags:
+                - testdata-api
+            description: API for bulk oppdatering av testdata
+            operationId: patch
+            parameters:
+                - name: datasett
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/BatchTestdataJobbRequest'
+                required: true
+            responses:
+                '207':
+                    description: Multi-Status
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: '#/components/schemas/BatchTestdataJobbResponse'
+components:
+    schemas:
+        Felt:
+            required:
+                - feltOverskrift
+                - feltnavn
+            type: object
+            properties:
+                feltnavn:
+                    type: string
+                feltOverskrift:
+                    type: string
+        Soekedokument:
+            required:
+                - detaljertListe
+            type: object
+            properties:
+                dokumentTittel:
+                    $ref: '#/components/schemas/Felt'
+                detaljertListe:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Felt'
+        Datasett:
+            required:
+                - datasettEier
+                - datasettOverskrift
+                - identifikator
+            type: object
+            properties:
+                identifikator:
+                    type: string
+                datasettOverskrift:
+                    type: string
+                datasettEier:
+                    $ref: '#/components/schemas/Enhet'
+                fellesdatakatalogDatasettIdentifikator:
+                    type: string
+        Enhet:
+            required:
+                - organisasjonsnavn
+                - organisasjonsnummer
+            type: object
+            properties:
+                organisasjonsnavn:
+                    type: string
+                organisasjonsnummer:
+                    type: string
+        Konfigurasjon:
+            required:
+                - datasett
+                - relasjoner
+                - soekekriterier
+                - soekevisning
+            type: object
+            properties:
+                datasett:
+                    $ref: '#/components/schemas/Datasett'
+                relasjoner:
+                    $ref: '#/components/schemas/Relasjoner'
+                soekevisning:
+                    $ref: '#/components/schemas/Soekedokument'
+                soekekriterier:
+                    $ref: '#/components/schemas/SoekeKriterier'
+            xml:
+                name: konfigurasjon
+        Relasjon:
+            required:
+                - felt
+                - referertDatasett
+                - relasjon
+            type: object
+            properties:
+                felt:
+                    $ref: '#/components/schemas/Felt'
+                referertDatasett:
+                    type: string
+                relasjon:
+                    type: string
+                relasjonsretning:
+                    type: string
+                    enum:
+                        - OPP
+                        - NED
+                        - TIL_SIDEN
+        Relasjoner:
+            type: object
+            properties:
+                relasjoner:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Relasjon'
+        Soek:
+            type: object
+            properties:
+                soekeTema:
+                    type: string
+                soekekriterier:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/SoekeKriterie'
+                soekekriterie:
+                    $ref: '#/components/schemas/SoekeKriterie'
+                erPrimaerKildeSoek:
+                    type: boolean
+        SoekeKriterie:
+            required:
+                - felt
+                - typeSoek
+            type: object
+            properties:
+                felt:
+                    $ref: '#/components/schemas/Felt'
+                typeSoek:
+                    type: string
+                    enum:
+                        - FRI_TEKST
+                        - DATO_FRA_TIL
+                        - FRA_TIL
+                        - DATO
+                        - ENKELTVALG
+                        - FLERVALG
+                        - HAR
+                        - HAR_IKKE
+                        - VERDIER_I_SEKVENS
+                        - ER
+                        - BOOL
+                feltformat:
+                    type: string
+                soekeVerdi:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/SoekeVerdi'
+        SoekeKriterier:
+            required:
+                - soek
+            type: object
+            properties:
+                soek:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Soek'
+        SoekeVerdi:
+            required:
+                - soekeVerdi
+            type: object
+            properties:
+                soekeVerdi:
+                    type: string
+                visningsNavn:
+                    type: string
+                skjul:
+                    type: boolean
+        BatchTestdataJobbRequest:
+            required:
+                - operasjoner
+            type: object
+            properties:
+                operasjoner:
+                    maxItems: 10000
+                    minItems: 1
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/TestdataDokumentOperasjon'
+        KildedataRequest:
+            required:
+                - data
+                - mimeType
+            type: object
+            properties:
+                mimeType:
+                    type: string
+                data:
+                    type: string
+                    description: Den opprinnelige kildedataen den søkbare versjonen er basert på
+        OppdaterTestdataDokumentOperasjon:
+            required:
+                - id
+                - soekdata
+                - versjon
+            type: object
+            allOf:
+                - $ref: '#/components/schemas/TestdataDokumentOperasjon'
+                - type: object
+                  properties:
+                      id:
+                          type: string
+                          description: 'ID på testdata dokument som benyttes for å koble sammen kilder, oppdateringer og sletting'
+                      versjon:
+                          type: integer
+                          description: Versjon av testdata. Kan være et timestamp
+                          format: int64
+                      soekdata:
+                          type: object
+                          description: Fri form JSON struktur tilpasset søk
+                      kildedata:
+                          $ref: '#/components/schemas/KildedataRequest'
+        SlettTestdataDokumentOperasjon:
+            required:
+                - id
+                - versjon
+            type: object
+            allOf:
+                - $ref: '#/components/schemas/TestdataDokumentOperasjon'
+                - type: object
+                  properties:
+                      id:
+                          type: string
+                      versjon:
+                          type: integer
+                          format: int64
+        TestdataDokumentOperasjon:
+            type: object
+            properties:
+                type:
+                    type: string
+                    enum:
+                        - OPPDATER
+                        - SLETT
+            discriminator:
+                propertyName: type
+                mapping:
+                    OPPDATER: '#/components/schemas/OppdaterTestdataDokumentOperasjon'
+                    SLETT: '#/components/schemas/SlettTestdataDokumentOperasjon'
+        BatchTestdataJobbResponse:
+            required:
+                - operasjoner
+            type: object
+            properties:
+                operasjoner:
+                    type: object
+                    additionalProperties:
+                        $ref: '#/components/schemas/TestdataDokumentOperasjonResultat'
+                    description: Et element for hver innsendt dokument med status på disse
+        TestdataDokumentOperasjonResultat:
+            required:
+                - id
+                - status
+                - type
+            type: object
+            properties:
+                id:
+                    type: string
+                type:
+                    type: string
+                    enum:
+                        - OPPDATER
+                        - SLETT
+                status:
+                    type: string
+                    enum:
+                        - CREATED
+                        - OK
+                        - CONFLICT
+                        - ACCEPTED
+            description: Et element for hver innsendt dokument med status på disse
+    securitySchemes:
+        maskinporten:
+            type: http
+            description: 'Tilgang via maskinporten (oauth2) med scope skatteetaten:testnorge/testdata.write'
+            scheme: bearer
+            bearerFormat: JWT
