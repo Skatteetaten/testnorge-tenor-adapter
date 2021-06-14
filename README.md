@@ -11,7 +11,6 @@ For tredjeparts-verktøy for integrasjon mot maskinporten henvises det til https
 For å kjøre eksempel adapteren trenger du:
 
 - Java 11+
-- Maven
 - Virksomhetssertifikat i en JKS
 - En maskinportenintegrasjon tildelt scopet `skatteetaten:testnorge/testdata.write`
 - En datasettidentifikator tildelt din virksomhet. 
@@ -29,7 +28,7 @@ Se [dokumentasjonen](https://skatteetaten.github.io/testnorge-tenor-dokumentasjo
 ## TL;DR;
 ```shell script
 # Kompiler
-mvn clean install
+./mvnw clean install
 # Sett konfigurasjon
 export TENOR_URL=https://api-utv.sits.no/api/testnorge/v2
 export TENOR_ORGNO=
