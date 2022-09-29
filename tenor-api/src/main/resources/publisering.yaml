@@ -344,6 +344,8 @@ components:
                     type: string
                     enum:
                         - FRI_TEKST
+                        - PERIODE_FRA_TIL
+                        - PERIODE
                         - DATO_FRA_TIL
                         - FRA_TIL
                         - DATO
@@ -351,8 +353,6 @@ components:
                         - FLERVALG
                         - HAR
                         - HAR_IKKE
-                        - VERDIER_I_SEKVENS
-                        - ER
                         - BOOL
                 feltformat:
                     type: string
