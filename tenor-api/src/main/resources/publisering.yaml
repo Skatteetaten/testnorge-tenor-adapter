@@ -132,7 +132,7 @@ paths:
                         '*/*':
                             schema:
                                 $ref: '#/components/schemas/Konfigurasjon'
-    /datasett/:
+    '/datasett/komplett/konfigurasjon':
         post:
             tags:
                 - datasett-api
@@ -324,6 +324,10 @@ components:
             properties:
                 soekeTema:
                     type: string
+                kombinertSoek:
+                    type: string
+                    enum:
+                        - HAR
                 soekekriterier:
                     type: array
                     items:
@@ -332,6 +336,8 @@ components:
                     $ref: '#/components/schemas/SoekeKriterie'
                 erPrimaerKildeSoek:
                     type: boolean
+                primaerkilde:
+                    type: string
         SoekeKriterie:
             required:
                 - felt
@@ -354,6 +360,8 @@ components:
                         - HAR
                         - HAR_IKKE
                         - BOOL
+                invertert:
+                    type: boolean
                 feltformat:
                     type: string
                 soekeVerdi:
