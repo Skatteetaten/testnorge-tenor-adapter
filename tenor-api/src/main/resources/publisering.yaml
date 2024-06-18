@@ -360,8 +360,6 @@ components:
                         - HAR
                         - HAR_IKKE
                         - BOOL
-                invertert:
-                    type: boolean
                 feltformat:
                     type: string
                 soekeVerdi:
