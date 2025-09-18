@@ -360,6 +360,7 @@ components:
                         - HAR
                         - HAR_IKKE
                         - BOOL
+                        - IDENTIFIKATOR
                 feltformat:
                     type: string
                 soekeVerdi:
